@@ -47,6 +47,15 @@ public class KafkaConfig {
 	@Value("${spring.kafka.topic.notify-ending}")
 	private String notifyEndingTopic;
 
+	@Value("${spring.kafka.topic.orchestrator}")
+	private String orchestratorTopic;
+
+	@Value("${spring.kafka.topic.inventory-success}")
+	private String inventorySuccessTopic;
+
+	@Value("${spring.kafka.topic.inventory-fail}")
+	private String inventoryFailTopic;
+
 	@Bean
 	public ConsumerFactory<String, String> consumerFactory() {
 		return new DefaultKafkaConsumerFactory<>(consumerProps());
@@ -85,13 +94,18 @@ public class KafkaConfig {
 	}
 
 	@Bean
-	public NewTopic startSagaTopic() {
-		return buildTopic(startSagaTopic);
+	public NewTopic orchestratorTopic() {
+		return buildTopic(orchestratorTopic);
 	}
 
 	@Bean
-	public NewTopic notifyEndingTopic() {
-		return buildTopic(notifyEndingTopic);
+	public NewTopic inventorySuccessTopic() {
+		return buildTopic(inventorySuccessTopic);
+	}
+
+	@Bean
+	public NewTopic inventoryFailTopic() {
+		return buildTopic(inventoryFailTopic);
 	}
 
 }
