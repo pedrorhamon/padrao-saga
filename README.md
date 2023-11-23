@@ -1,1 +1,3 @@
 # padrao-saga
+
+utilizando kafka
