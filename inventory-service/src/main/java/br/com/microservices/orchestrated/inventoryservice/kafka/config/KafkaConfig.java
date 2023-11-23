@@ -41,12 +41,6 @@ public class KafkaConfig {
 	@Value("${spring.kafka.consumer.auto-offset-reset}")
 	private String autoOffsetReset;
 
-	@Value("${spring.kafka.topic.start-saga}")
-	private String startSagaTopic;
-
-	@Value("${spring.kafka.topic.notify-ending}")
-	private String notifyEndingTopic;
-
 	@Value("${spring.kafka.topic.orchestrator}")
 	private String orchestratorTopic;
 
