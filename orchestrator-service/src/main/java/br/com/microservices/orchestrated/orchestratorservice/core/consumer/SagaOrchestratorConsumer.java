@@ -28,20 +28,20 @@ public class SagaOrchestratorConsumer {
 	public void consumeOrchestratorEvent(String payload) {
 		log.info("Receiving event {} from orchestrator topic", payload);
 		var event = jsonUtil.toEvent(payload);
-		service.continueSaga(event);
+//		service.continueSaga(event);
 	}
 
 	@KafkaListener(groupId = "${spring.kafka.consumer.group-id}", topics = "${spring.kafka.topic.finish-success}")
 	public void consumeFinishSagaSuccessEvent(String payload) {
 		log.info("Receiving event {} from finish-success topic", payload);
 		var event = jsonUtil.toEvent(payload);
-		service.finishSagaSuccess(event);
+//		service.finishSagaSuccess(event);
 	}
 
 	@KafkaListener(groupId = "${spring.kafka.consumer.group-id}", topics = "${spring.kafka.topic.finish-fail}")
 	public void consumeFinishSagaFailEvent(String payload) {
 		log.info("Receiving event {} from finish-fail topic", payload);
 		var event = jsonUtil.toEvent(payload);
-		service.finishSagaFail(event);
+//		service.finishSagaFail(event);
 	}
 }
