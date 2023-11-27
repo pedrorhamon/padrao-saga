@@ -7,6 +7,4 @@ import br.com.microservices.orchestrated.orderservice.core.document.Event;
 /**
  * @author pedroRhamon
  */
-public interface EventRepository extends MongoRepository<Event, String>{
-
-}
+public interface EventRepository extends MongoRepository<Event, String>{}

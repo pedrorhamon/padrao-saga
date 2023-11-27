@@ -7,6 +7,4 @@ import br.com.microservices.orchestrated.orderservice.core.document.Order;
 /**
  * @author pedroRhamon
  */
-public interface OrderRepository extends MongoRepository<Order, String>{
-
-}
+public interface OrderRepository extends MongoRepository<Order, String>{}
