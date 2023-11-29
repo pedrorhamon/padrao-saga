@@ -39,7 +39,9 @@ public class OrderService {
 				.transactionId(String.format(TRANSACTION_ID_PATTERN, Instant.now().toEpochMilli(), UUID.randomUUID()))
 				.build();
 		
-		return this.orderRepository.save(order);
+		this.orderRepository.save(order);
+		this.sagaProducer.sendEvent(this.jsonUtil.toJson(this.createOrder(orderRequest)));
+		return order;
 	}
 	
 	private Event createPayload(Order order) {
