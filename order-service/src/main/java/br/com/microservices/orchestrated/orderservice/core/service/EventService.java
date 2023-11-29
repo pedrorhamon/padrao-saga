@@ -2,6 +2,7 @@ package br.com.microservices.orchestrated.orderservice.core.service;
 
 import org.springframework.stereotype.Service;
 
+import br.com.microservices.orchestrated.orderservice.core.repository.EventRepository;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -10,5 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class EventService {
+	
+	private final EventRepository eventRepository;
 
 }
