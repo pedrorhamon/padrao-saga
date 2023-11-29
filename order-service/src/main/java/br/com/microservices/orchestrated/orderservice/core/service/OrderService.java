@@ -40,7 +40,7 @@ public class OrderService {
 				.build();
 		
 		this.orderRepository.save(order);
-		this.sagaProducer.sendEvent(this.jsonUtil.toJson(this.createOrder(orderRequest)));
+		this.sagaProducer.sendEvent(jsonUtil.toJson(createPayload(order)));
 		return order;
 	}
 	
