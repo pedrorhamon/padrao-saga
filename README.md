@@ -1,3 +1,3 @@
 # padrao-saga
 
-utilizando kafka
+utilizando kafka, java 17
