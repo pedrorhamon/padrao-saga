@@ -1,5 +1,6 @@
 package br.com.microservices.orchestrated.orderservice.core.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,5 +17,9 @@ import lombok.AllArgsConstructor;
 public class OrderController {
 	
 	private final OrderService orderService;
+	
+	public ResponseEntity<?> saveOrder() {
+		
+	}
 
 }
