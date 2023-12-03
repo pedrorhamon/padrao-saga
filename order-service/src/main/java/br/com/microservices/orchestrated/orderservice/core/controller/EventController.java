@@ -25,10 +25,10 @@ public class EventController {
 	
 	@PostMapping
 	public Event createOrder(EventFilters eventFilters) {
-		
+		return this.eventService.findAllFilters(eventFilters);
 	}
 	
-	@GetMapping("/all")
+	@GetMapping("all")
 	public List<Event> findAll() {
 		return this.eventService.findAll();
 	}
