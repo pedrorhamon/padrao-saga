@@ -1,19 +1,20 @@
 package br.com.microservices.orchestrated.orderservice.core.service;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.kafka.common.security.oauthbearer.internals.secured.ValidateException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.ObjectUtils;
 
 import br.com.microservices.orchestrated.orderservice.core.document.Event;
 import br.com.microservices.orchestrated.orderservice.core.dto.EventFilters;
 import br.com.microservices.orchestrated.orderservice.core.repository.EventRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import static org.springframework.util.ObjectUtils.isEmpty;
 
 /**
  * @author pedroRhamon
@@ -39,7 +40,23 @@ public class EventService {
 	
 	public Event findAllFilters(EventFilters eventFilters) {
 		this.validateEmptyFilters(eventFilters);
-		if(!isEmpty(eventFilters))
+		if(!isEmpty(eventFilters.getOrderId())) {
+			return this.findByOrderId(eventFilters.getOrderId());
+		} else {
+			return this.findByTransactionId(eventFilters.getTransactionId());
+		}
+	}
+	
+	private Event findByOrderId(String orderId) {
+		return this.eventRepository
+				.findTop1ByOrderIdOrderByCreatedAtDesc(orderId)
+				.orElseThrow(()-> new ValidateException("Event not found by orderID"));
+	}
+	
+	private Event findByTransactionId(String transactionId) {
+		return this.eventRepository
+				.findTop1ByTransactionIdOrderByCreatedAtDesc(transactionId)
+				.orElseThrow(()-> new ValidateException("Transaction not found by orderID"));
 	}
 	
 	private void validateEmptyFilters(EventFilters eventFilters) {
