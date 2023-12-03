@@ -4,12 +4,11 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
-import org.apache.kafka.common.security.oauthbearer.internals.secured.ValidateException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.microservices.orchestrated.orderservice.config.exceptions.ValidationException;
 import br.com.microservices.orchestrated.orderservice.core.document.Event;
 import br.com.microservices.orchestrated.orderservice.core.dto.EventFilters;
 import br.com.microservices.orchestrated.orderservice.core.repository.EventRepository;
@@ -50,18 +49,18 @@ public class EventService {
 	private Event findByOrderId(String orderId) {
 		return this.eventRepository
 				.findTop1ByOrderIdOrderByCreatedAtDesc(orderId)
-				.orElseThrow(()-> new ValidateException("Event not found by orderID"));
+				.orElseThrow(()-> new ValidationException("Event not found by orderID"));
 	}
 	
 	private Event findByTransactionId(String transactionId) {
 		return this.eventRepository
 				.findTop1ByTransactionIdOrderByCreatedAtDesc(transactionId)
-				.orElseThrow(()-> new ValidateException("Transaction not found by orderID"));
+				.orElseThrow(()-> new ValidationException("Transaction not found by orderID"));
 	}
 	
 	private void validateEmptyFilters(EventFilters eventFilters) {
 		if(isEmpty(eventFilters.getOrderId()) && isEmpty(eventFilters.getTransactionId())) {
-			throw new ValidateException("OrderId or TransactionID must be informed");
+			throw new ValidationException("OrderId or TransactionID must be informed");
 		}
 	}
 	
