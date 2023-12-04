@@ -1,5 +1,8 @@
 package br.com.microservices.orchestrated.productvalidationservice.core.model;
 
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,10 +27,19 @@ public class Validation {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
+	@Column(nullable = false)
 	private String orderId;
 	
+	@Column(nullable = false)
 	private String transactionId;
 	
+	@Column(nullable = false)
 	private boolean success;
+	
+	@Column(nullable = false)
+	private LocalDateTime createdAt;
+	
+	@Column(nullable = false)
+	private LocalDateTime updateAt;
 
 }
