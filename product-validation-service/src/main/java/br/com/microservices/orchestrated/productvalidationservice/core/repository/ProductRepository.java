@@ -10,4 +10,5 @@ import br.com.microservices.orchestrated.productvalidationservice.core.model.Pro
  */
 public interface ProductRepository extends JpaRepository<Product, Integer>{
 
+	boolean existsByCode(String code);
 }
