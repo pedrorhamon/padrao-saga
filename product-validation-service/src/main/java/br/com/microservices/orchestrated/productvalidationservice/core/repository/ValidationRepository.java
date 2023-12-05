@@ -9,4 +9,5 @@ import br.com.microservices.orchestrated.productvalidationservice.core.model.Val
  */
 public interface ValidationRepository extends JpaRepository<Validation, Integer>{
 
+	boolean existsByOrderIdAndTransactionId(String orderId, String transactionID);
 }
