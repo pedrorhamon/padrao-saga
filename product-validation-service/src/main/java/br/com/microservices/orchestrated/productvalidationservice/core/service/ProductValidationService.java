@@ -3,9 +3,13 @@ package br.com.microservices.orchestrated.productvalidationservice.core.service;
 import org.springframework.stereotype.Service;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
+import java.time.LocalDateTime;
+
 import br.com.microservices.orchestrated.productvalidationservice.config.exception.ValidationException;
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.Event;
+import br.com.microservices.orchestrated.productvalidationservice.core.dto.History;
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.OrderProduct;
+import br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus;
 import br.com.microservices.orchestrated.productvalidationservice.core.model.Validation;
 import br.com.microservices.orchestrated.productvalidationservice.core.producer.KafkaProducer;
 import br.com.microservices.orchestrated.productvalidationservice.core.repository.ProductRepository;
@@ -47,8 +51,17 @@ public class ProductValidationService {
 	}
 
 	private void handleSuccess(Event event) {
-		// TODO Auto-generated method stub
-		
+		event.setStatus(ESagaStatus.SUCCESS);
+		event.setSource(CURRENT_SOURCE);
+	}
+	
+	private void addHistory(Event event, String message) {
+		var history = History.builder()
+				.source(event.getSource())
+				.status(event.getStatus())
+				.message(message)
+				.createdAt(LocalDateTime.now())
+				.build();
 	}
 
 	private void createValidation(Event event, boolean success) {
