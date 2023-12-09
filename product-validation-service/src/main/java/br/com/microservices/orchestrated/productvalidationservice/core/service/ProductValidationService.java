@@ -31,14 +31,29 @@ public class ProductValidationService {
 	
 	public void validationExistingProducts(Event event) {
 		try {
-			checkCurrentValidation(event);
-			createValidation(event);
-			handleSuccess(event);
+			this.checkCurrentValidation(event);
+			this.createValidation(event);
+			this.handleSuccess(event);
 		} catch (Exception e) {
 			log.error("Error trying to validation products: ", e);
 		}
 		
 		this.producer.sendEvent(this.jsonUtil.toJson(event));
+	}
+
+	private void handleSuccess(Event event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void createValidation(Event event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void checkCurrentValidation(Event event) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
