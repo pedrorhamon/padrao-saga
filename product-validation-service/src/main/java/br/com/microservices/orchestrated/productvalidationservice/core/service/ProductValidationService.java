@@ -5,6 +5,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 
 import br.com.microservices.orchestrated.productvalidationservice.config.exception.ValidationException;
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.Event;
+import br.com.microservices.orchestrated.productvalidationservice.core.dto.OrderProduct;
 import br.com.microservices.orchestrated.productvalidationservice.core.producer.KafkaProducer;
 import br.com.microservices.orchestrated.productvalidationservice.core.repository.ProductRepository;
 import br.com.microservices.orchestrated.productvalidationservice.core.repository.ValidationRepository;
@@ -56,8 +57,28 @@ public class ProductValidationService {
 
 	private void checkCurrentValidation(Event event) {
 		this.validateProductsInformed(event);
+		if(this.validationRepository.existsByOrderIdAndTransactionId(event.getOrderId(), event.getTransactionId())) {
+			throw new ValidationException("There's another transactionId for this validation");
+		}
+		
+		event.getPlayload().getProducts().forEach(product -> {
+			this.validationProductInformed(product);
+			this.validateExistingProduct(product.getProduct().getCode());
+		});
 	}
 
+	private void validationProductInformed(OrderProduct orderProduct) {
+		if(isEmpty(orderProduct.getProduct()) || isEmpty(orderProduct.getProduct().getCode())) {
+			throw new ValidationException("Product List is empty!");
+		}
+	}
+	
+	private void validateExistingProduct(String code) {
+		if (!this.productRepository.existsByCode(code)) {
+			throw new ValidationException("Product does not exists in database!");
+		}
+	}
+	
 	private void validateProductsInformed(Event event) {
 		if(isEmpty(event.getPlayload().getId()) || isEmpty(event.getPlayload().getProducts())) {
 			throw new ValidationException("Product List is empty!");
