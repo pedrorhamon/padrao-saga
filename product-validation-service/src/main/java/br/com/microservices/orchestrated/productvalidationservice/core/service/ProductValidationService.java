@@ -50,6 +50,11 @@ public class ProductValidationService {
 		this.producer.sendEvent(this.jsonUtil.toJson(event));
 	}
 
+	private void handleFailCurrentNotExecuted(Event event, String message) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private void handleSuccess(Event event) {
 		event.setStatus(ESagaStatus.SUCCESS);
 		event.setSource(CURRENT_SOURCE);
