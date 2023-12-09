@@ -6,6 +6,7 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 import br.com.microservices.orchestrated.productvalidationservice.config.exception.ValidationException;
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.Event;
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.OrderProduct;
+import br.com.microservices.orchestrated.productvalidationservice.core.model.Validation;
 import br.com.microservices.orchestrated.productvalidationservice.core.producer.KafkaProducer;
 import br.com.microservices.orchestrated.productvalidationservice.core.repository.ProductRepository;
 import br.com.microservices.orchestrated.productvalidationservice.core.repository.ValidationRepository;
@@ -35,7 +36,7 @@ public class ProductValidationService {
 	public void validationExistingProducts(Event event) {
 		try {
 			this.checkCurrentValidation(event);
-			this.createValidation(event);
+			this.createValidation(event, true);
 			this.handleSuccess(event);
 		} catch (Exception e) {
 			log.error("Error trying to validation products: ", e);
@@ -50,9 +51,14 @@ public class ProductValidationService {
 		
 	}
 
-	private void createValidation(Event event) {
-		// TODO Auto-generated method stub
+	private void createValidation(Event event, boolean success) {
+		var validation = Validation.builder()
+				.orderId(event.getId())
+				.transactionId(event.getPlayload().getId())
+				.success(success)
+				.build();
 		
+		this.validationRepository.save(validation);
 	}
 
 	private void checkCurrentValidation(Event event) {
