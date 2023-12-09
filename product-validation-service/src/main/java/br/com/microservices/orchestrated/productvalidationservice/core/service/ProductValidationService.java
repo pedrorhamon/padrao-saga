@@ -53,6 +53,7 @@ public class ProductValidationService {
 	private void handleSuccess(Event event) {
 		event.setStatus(ESagaStatus.SUCCESS);
 		event.setSource(CURRENT_SOURCE);
+		this.addHistory(event, "Products are validated successfully!");
 	}
 	
 	private void addHistory(Event event, String message) {
@@ -62,6 +63,8 @@ public class ProductValidationService {
 				.message(message)
 				.createdAt(LocalDateTime.now())
 				.build();
+		
+		event.addToHistory(history);
 	}
 
 	private void createValidation(Event event, boolean success) {

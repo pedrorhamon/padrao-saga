@@ -1,6 +1,9 @@
 package br.com.microservices.orchestrated.productvalidationservice.core.dto;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus;
@@ -18,7 +21,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class Event {
-	
+
 	private String id;
 	private String transactionId;
 	private String orderId;
@@ -28,4 +31,9 @@ public class Event {
 	private List<History> eventHistory;
 	private LocalDateTime createdAt;
 
+	public void addToHistory(History history) {
+		if (isEmpty(eventHistory)) {
+			eventHistory = new ArrayList<>();
+		}
+	}
 }
