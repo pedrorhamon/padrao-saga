@@ -40,7 +40,7 @@ public class ProductValidationService {
 	
 	private final ValidationRepository validationRepository;
 	
-	public void validationExistingProducts(Event event) {
+	public void validateExistingProducts(Event event) {
 		try {
 			this.checkCurrentValidation(event);
 			this.createValidation(event, true);
