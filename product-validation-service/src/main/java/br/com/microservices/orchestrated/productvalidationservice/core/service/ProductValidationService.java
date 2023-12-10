@@ -9,7 +9,8 @@ import br.com.microservices.orchestrated.productvalidationservice.config.excepti
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.Event;
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.History;
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.OrderProduct;
-import br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus;
+import static br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus.SUCCESS;
+import static br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus.ROLLBACK_PENDING;
 import br.com.microservices.orchestrated.productvalidationservice.core.model.Validation;
 import br.com.microservices.orchestrated.productvalidationservice.core.producer.KafkaProducer;
 import br.com.microservices.orchestrated.productvalidationservice.core.repository.ProductRepository;
@@ -51,12 +52,13 @@ public class ProductValidationService {
 	}
 
 	private void handleFailCurrentNotExecuted(Event event, String message) {
-		// TODO Auto-generated method stub
-		
+		event.setStatus(ROLLBACK_PENDING);
+		event.setSource(CURRENT_SOURCE);
+		this.addHistory(event, "Fail to validate products: ".concat(message));
 	}
 
 	private void handleSuccess(Event event) {
-		event.setStatus(ESagaStatus.SUCCESS);
+		event.setStatus(SUCCESS);
 		event.setSource(CURRENT_SOURCE);
 		this.addHistory(event, "Products are validated successfully!");
 	}
