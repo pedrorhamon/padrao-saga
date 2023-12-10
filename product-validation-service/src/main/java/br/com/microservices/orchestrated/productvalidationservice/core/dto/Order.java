@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class Order {
 	
 	private String id;
-	private List<OrderProduct> products;
+	private List<OrderProducts> products;
 	private LocalDateTime createdAt;
 	private String transactionId;
 	private double totalAmount;
