@@ -1,16 +1,18 @@
 package br.com.microservices.orchestrated.productvalidationservice.core.service;
 
-import org.springframework.stereotype.Service;
+import static br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus.FAIL;
+import static br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus.ROLLBACK_PENDING;
+import static br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus.SUCCESS;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 import java.time.LocalDateTime;
+
+import org.springframework.stereotype.Service;
 
 import br.com.microservices.orchestrated.productvalidationservice.config.exception.ValidationException;
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.Event;
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.History;
 import br.com.microservices.orchestrated.productvalidationservice.core.dto.OrderProduct;
-import static br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus.SUCCESS;
-import static br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus.ROLLBACK_PENDING;
 import br.com.microservices.orchestrated.productvalidationservice.core.model.Validation;
 import br.com.microservices.orchestrated.productvalidationservice.core.producer.KafkaProducer;
 import br.com.microservices.orchestrated.productvalidationservice.core.repository.ProductRepository;
@@ -49,6 +51,24 @@ public class ProductValidationService {
 		}
 		
 		this.producer.sendEvent(this.jsonUtil.toJson(event));
+	}
+	
+	public void rollbackEvent(Event event) {
+		this.changeValidationToFail(event);
+		event.setStatus(FAIL);
+		event.setSource(CURRENT_SOURCE);
+		addHistory(event, "Rollback executed on product validation!");
+		this.producer.sendEvent(jsonUtil.toJson(event));
+		
+	}
+
+	private void changeValidationToFail(Event event) {
+		this.validationRepository.findByOrderIdAndTransactionId(event.getPlayload().getId(), event.getTransactionId())
+		.ifPresentOrElse(validation -> {
+			validation.setSuccess(false);
+			this.validationRepository.save(validation);
+		},
+		  () -> this.createValidation(event, false));
 	}
 
 	private void handleFailCurrentNotExecuted(Event event, String message) {
