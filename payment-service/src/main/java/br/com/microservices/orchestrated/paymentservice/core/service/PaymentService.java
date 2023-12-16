@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class PaymentService {
 
 	private static final String CURRENT_SOURCE = "PAYMENT_SERVICE";
-	private static final Double REDUCE_SUM_VALE = 0.0;
+	private static final Double REDUCE_SUM_VALUE = 0.0;
 
 	private final PaymentRepository paymentRepository;
 
@@ -51,14 +51,15 @@ public class PaymentService {
 	}
 
 	private double calculateAmount(Event event) {
-		return event
-				.getPlayload()
-				.getProducts()
-				.stream()
-				.map(product-> product.getQuantity() * product.getProduct().getUnitValue())
-	}
+        return event
+            .getPlayload()
+            .getProducts()
+            .stream()
+            .map(product -> product.getQuantity() * product.getProduct().getUnitValue())
+            .reduce(REDUCE_SUM_VALUE, Double::sum);
+    }
 	
-	private double calculateTotalItems(Event event) {
+	private int calculateTotalItems(Event event) {
 		return event
 				.getPlayload()
 				.getProducts()
