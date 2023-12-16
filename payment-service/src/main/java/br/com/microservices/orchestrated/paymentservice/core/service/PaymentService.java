@@ -2,7 +2,10 @@ package br.com.microservices.orchestrated.paymentservice.core.service;
 
 import org.springframework.stereotype.Service;
 
+import br.com.microservices.orchestrated.paymentservice.config.exception.ValidationException;
 import br.com.microservices.orchestrated.paymentservice.core.dto.Event;
+import br.com.microservices.orchestrated.paymentservice.core.dto.OrderProduct;
+import br.com.microservices.orchestrated.paymentservice.core.model.Payment;
 import br.com.microservices.orchestrated.paymentservice.core.producer.KafkaProducer;
 import br.com.microservices.orchestrated.paymentservice.core.repository.PaymentRepository;
 import br.com.microservices.orchestrated.paymentservice.core.utils.JsonUtil;
@@ -18,19 +21,60 @@ import lombok.extern.slf4j.Slf4j;
 public class PaymentService {
 
 	private static final String CURRENT_SOURCE = "PAYMENT_SERVICE";
+	private static final Double REDUCE_SUM_VALE = 0.0;
 
 	private final PaymentRepository paymentRepository;
 
 	private final JsonUtil jsonUtil;
 	private final KafkaProducer producer;
-	
+
 	public void realizePayment(Event event) {
 		try {
-			
+			this.checkCurrentValidation(event);
+			this.createPendingPayment(event);
 		} catch (Exception e) {
-            log.error("Error trying to make payment: ", e);
+			log.error("Error trying to make payment: ", e);
 		}
 		this.producer.sendEvent(this.jsonUtil.toJson(event));
+	}
+
+	private void createPendingPayment(Event event) {
+		 var totalAmount = this.calculateAmount(event);
+		 var totalItems = this.calculateTotalItems(event);
+		 var payment = Payment.builder()
+				 .orderId(event.getPlayload().getId())
+				 .transactionId(event.getTransactionId())
+				 .totalAmount(0)
+				 .totalItems(0)
+				 .build();
+		 this.save(payment);
+	}
+
+	private double calculateAmount(Event event) {
+		return event
+				.getPlayload()
+				.getProducts()
+				.stream()
+				.map(product-> product.getQuantity() * product.getProduct().getUnitValue())
+	}
+	
+	private double calculateTotalItems(Event event) {
+		return event
+				.getPlayload()
+				.getProducts()
+				.stream()
+				.map(OrderProduct::getQuantity)
+				.reduce(0, Integer::sum);
+	}
+
+	private void save(Payment payment) {
+		this.paymentRepository.save(payment);
+	}
+
+	private void checkCurrentValidation(Event event) {
+		if (this.paymentRepository.existsByOrderIdAndTransactionId(event.getOrderId(), event.getTransactionId())) {
+			throw new ValidationException("There's another transactionId for this validation.");
+		}
 	}
 
 }
