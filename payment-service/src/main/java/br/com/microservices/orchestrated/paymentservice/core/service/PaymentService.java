@@ -44,10 +44,16 @@ public class PaymentService {
 		 var payment = Payment.builder()
 				 .orderId(event.getPlayload().getId())
 				 .transactionId(event.getTransactionId())
-				 .totalAmount(0)
-				 .totalItems(0)
+				 .totalAmount(totalAmount)
+				 .totalItems(totalItems)
 				 .build();
 		 this.save(payment);
+		 this.setEventAmountItems(event, payment);
+	}
+	
+	private void setEventAmountItems(Event event, Payment payment) {
+		event.getPlayload().setTotalAmount(payment.getTotalAmount());
+		event.getPlayload().setTotalItems(payment.getTotalItems());
 	}
 
 	private double calculateAmount(Event event) {
