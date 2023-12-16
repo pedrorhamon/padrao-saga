@@ -22,6 +22,7 @@ public class PaymentService {
 
 	private static final String CURRENT_SOURCE = "PAYMENT_SERVICE";
 	private static final Double REDUCE_SUM_VALUE = 0.0;
+    private static final Double MIN_VALUE_AMOUNT = 0.1;
 
 	private final PaymentRepository paymentRepository;
 
@@ -37,6 +38,12 @@ public class PaymentService {
 		}
 		this.producer.sendEvent(this.jsonUtil.toJson(event));
 	}
+	
+	private void validateAmount(double amount) {
+        if (amount < MIN_VALUE_AMOUNT) {
+            throw new ValidationException("The minimal amount available is ".concat(String.valueOf(MIN_VALUE_AMOUNT)));
+        }
+    }
 
 	private void createPendingPayment(Event event) {
 		 var totalAmount = this.calculateAmount(event);
