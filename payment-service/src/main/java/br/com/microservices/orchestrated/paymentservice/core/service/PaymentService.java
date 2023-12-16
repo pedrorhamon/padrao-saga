@@ -65,7 +65,7 @@ public class PaymentService {
 				.getProducts()
 				.stream()
 				.map(OrderProduct::getQuantity)
-				.reduce(0, Integer::sum);
+				.reduce(REDUCE_SUM_VALUE.intValue(), Integer::sum);
 	}
 
 	private void save(Payment payment) {
