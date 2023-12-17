@@ -41,6 +41,7 @@ public class PaymentService {
 			var payment = this.findByOrderIdAndTransactionId(event);
 			this.validateAmount(payment.getTotalAmount());
 			this.changePaymentToSuccess(payment);
+			this.handleSuccess(event);
 		} catch (Exception e) {
 			log.error("Error trying to make payment: ", e);
 		}
@@ -112,7 +113,7 @@ public class PaymentService {
 	private void handleSuccess(Event event) {
         event.setStatus(ESagaStatus.SUCCESS);
         event.setSource(CURRENT_SOURCE);
-        addHistory(event, "Products are validated successfully!");
+        this.addHistory(event, "Payment realized successfully!");
     }
 	
 	private void addHistory(Event event, String message) {
