@@ -36,6 +36,7 @@ public class PaymentService {
 			this.createPendingPayment(event);
 			var payment = this.findByOrderIdAndTransactionId(event);
 			this.validateAmount(payment.getTotalAmount());
+			this.changePaymentToSuccess(payment);
 		} catch (Exception e) {
 			log.error("Error trying to make payment: ", e);
 		}
