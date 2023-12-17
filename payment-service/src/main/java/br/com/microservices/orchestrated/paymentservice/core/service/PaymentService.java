@@ -1,11 +1,15 @@
 package br.com.microservices.orchestrated.paymentservice.core.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 
 import br.com.microservices.orchestrated.paymentservice.config.exception.ValidationException;
 import br.com.microservices.orchestrated.paymentservice.core.dto.Event;
+import br.com.microservices.orchestrated.paymentservice.core.dto.History;
 import br.com.microservices.orchestrated.paymentservice.core.dto.OrderProduct;
 import br.com.microservices.orchestrated.paymentservice.core.enums.EPaymentStatus;
+import br.com.microservices.orchestrated.paymentservice.core.enums.ESagaStatus;
 import br.com.microservices.orchestrated.paymentservice.core.model.Payment;
 import br.com.microservices.orchestrated.paymentservice.core.producer.KafkaProducer;
 import br.com.microservices.orchestrated.paymentservice.core.repository.PaymentRepository;
@@ -104,5 +108,22 @@ public class PaymentService {
 		payment.setStatus(EPaymentStatus.SUCCESS);
 		this.save(payment);
 	}
+	
+	private void handleSuccess(Event event) {
+        event.setStatus(ESagaStatus.SUCCESS);
+        event.setSource(CURRENT_SOURCE);
+        addHistory(event, "Products are validated successfully!");
+    }
+	
+	private void addHistory(Event event, String message) {
+        var history = History
+            .builder()
+            .source(event.getSource())
+            .status(event.getStatus())
+            .message(message)
+            .createdAt(LocalDateTime.now())
+            .build();
+        event.addToHistory(history);
+    }
 
 }

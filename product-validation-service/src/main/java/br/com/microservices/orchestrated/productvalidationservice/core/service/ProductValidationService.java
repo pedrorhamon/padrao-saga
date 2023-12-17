@@ -94,7 +94,7 @@ public class ProductValidationService {
     private void handleSuccess(Event event) {
         event.setStatus(SUCCESS);
         event.setSource(CURRENT_SOURCE);
-        addHistory(event, "Products are validated successfully!");
+        this.addHistory(event, "Products are validated successfully!");
     }
 
     private void addHistory(Event event, String message) {
