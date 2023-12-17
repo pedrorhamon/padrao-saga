@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import br.com.microservices.orchestrated.paymentservice.config.exception.ValidationException;
 import br.com.microservices.orchestrated.paymentservice.core.dto.Event;
 import br.com.microservices.orchestrated.paymentservice.core.dto.OrderProduct;
+import br.com.microservices.orchestrated.paymentservice.core.enums.EPaymentStatus;
 import br.com.microservices.orchestrated.paymentservice.core.model.Payment;
 import br.com.microservices.orchestrated.paymentservice.core.producer.KafkaProducer;
 import br.com.microservices.orchestrated.paymentservice.core.repository.PaymentRepository;
@@ -96,6 +97,11 @@ public class PaymentService {
 	private Payment findByOrderIdAndTransactionId(Event event) {
 		return this.paymentRepository.findByOrderIdAndTransactionId(event.getPlayload().getId(), event.getTransactionId())
 				.orElseThrow(()-> new ValidationException("Payment not found by OrdeID and TransactionID"));
+	}
+	
+	private void changePaymentToSuccess(Payment payment) {
+		payment.setStatus(EPaymentStatus.SUCCESS);
+		this.save(payment);
 	}
 
 }
