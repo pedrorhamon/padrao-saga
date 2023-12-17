@@ -1,5 +1,7 @@
 package br.com.microservices.orchestrated.paymentservice.core.service;
 
+import static br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus.FAIL;
+
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
@@ -126,5 +128,21 @@ public class PaymentService {
             .build();
         event.addToHistory(history);
     }
+	
+	public void rollbackEvent(Event event) {
+        changeValidationToFail(event);
+        event.setStatus(FAIL);
+        event.setSource(CURRENT_SOURCE);
+        addHistory(event, "Rollback executed on product validation!");
+        this.producer.sendEvent(this.jsonUtil.toJson(event));
+    }
+
+	private void changeValidationToFail(Event event) {
+		this.paymentRepository.findByOrderIdAndTransactionId(event.getOrderId(), event.getTransactionId())
+		.ifPresentOrElse(validation -> {
+			validation.setSuccess(false);
+			this.paymentRepository.save(validation);
+		}, () -> createValidation(event, false));
+	}
 
 }
