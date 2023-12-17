@@ -33,6 +33,8 @@ public class PaymentService {
 		try {
 			this.checkCurrentValidation(event);
 			this.createPendingPayment(event);
+			var payment = this.findByOrderIdAndTransactionId(event);
+			this.validateAmount(payment.getTotalAmount());
 		} catch (Exception e) {
 			log.error("Error trying to make payment: ", e);
 		}
@@ -89,6 +91,11 @@ public class PaymentService {
 		if (this.paymentRepository.existsByOrderIdAndTransactionId(event.getOrderId(), event.getTransactionId())) {
 			throw new ValidationException("There's another transactionId for this validation.");
 		}
+	}
+	
+	private Payment findByOrderIdAndTransactionId(Event event) {
+		return this.paymentRepository.findByOrderIdAndTransactionId(event.getPlayload().getId(), event.getTransactionId())
+				.orElseThrow(()-> new ValidationException("Payment not found by OrdeID and TransactionID"));
 	}
 
 }
