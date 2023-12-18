@@ -1,8 +1,5 @@
 package br.com.microservices.orchestrated.paymentservice.core.service;
 
-import static br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus.FAIL;
-import static br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus.ROLLBACK_PENDING;
-
 import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Service;
@@ -131,7 +128,7 @@ public class PaymentService {
         event.addToHistory(history);
     }
 	
-	private void realizeRefund(Event event) {
+	public void realizeRefund(Event event) {
 		this.changePaymentStatusToRefund(event);
 		event.setStatus(ESagaStatus.FAIL);
 		event.setSource(CURRENT_SOURCE);
