@@ -1,6 +1,7 @@
 package br.com.microservices.orchestrated.paymentservice.core.service;
 
 import static br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus.FAIL;
+import static br.com.microservices.orchestrated.productvalidationservice.core.enums.ESagaStatus.ROLLBACK_PENDING;
 
 import java.time.LocalDateTime;
 
@@ -144,5 +145,11 @@ public class PaymentService {
 			this.paymentRepository.save(validation);
 		}, () -> createValidation(event, false));
 	}
+	
+	 private void handleFailCurrentNotExecuted(Event event, String message) {
+	        event.setStatus(ESagaStatus.ROLLBACK_PENDING);
+	        event.setSource(CURRENT_SOURCE);
+	        addHistory(event, "Fail to validate products: ".concat(message));
+	    }
 
 }
