@@ -131,7 +131,7 @@ public class PaymentService {
 	
 	public void rollbackEvent(Event event) {
         changeValidationToFail(event);
-        event.setStatus(FAIL);
+        event.setStatus(ESagaStatus.FAIL);
         event.setSource(CURRENT_SOURCE);
         addHistory(event, "Rollback executed on product validation!");
         this.producer.sendEvent(this.jsonUtil.toJson(event));
