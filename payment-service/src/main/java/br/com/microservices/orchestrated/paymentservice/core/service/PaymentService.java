@@ -47,6 +47,7 @@ public class PaymentService {
 			this.handleSuccess(event);
 		} catch (Exception e) {
 			log.error("Error trying to make payment: ", e);
+			this.handleFailCurrentNotExecuted(event, e.getMessage());
 		}
 		this.producer.sendEvent(this.jsonUtil.toJson(event));
 	}
@@ -130,26 +131,25 @@ public class PaymentService {
         event.addToHistory(history);
     }
 	
-	public void rollbackEvent(Event event) {
-        changeValidationToFail(event);
-        event.setStatus(ESagaStatus.FAIL);
-        event.setSource(CURRENT_SOURCE);
-        addHistory(event, "Rollback executed on product validation!");
-        this.producer.sendEvent(this.jsonUtil.toJson(event));
-    }
-
-	private void changeValidationToFail(Event event) {
-		this.paymentRepository.findByOrderIdAndTransactionId(event.getOrderId(), event.getTransactionId())
-		.ifPresentOrElse(validation -> {
-			validation.setSuccess(false);
-			this.paymentRepository.save(validation);
-		}, () -> createValidation(event, false));
+	private void realizeRefund(Event event) {
+		this.changePaymentStatusToRefund(event);
+		event.setStatus(ESagaStatus.FAIL);
+		event.setSource(CURRENT_SOURCE);
+		addHistory(event, "Rollback executed for payment");
+		this.producer.sendEvent(this.jsonUtil.toJson(event));
+	}
+	
+	private void changePaymentStatusToRefund(Event event) {
+		var payment = this.findByOrderIdAndTransactionId(event);
+		payment.setStatus(EPaymentStatus.REFUND);
+		this.setEventAmountItems(event, payment);
+		this.save(payment);
 	}
 	
 	 private void handleFailCurrentNotExecuted(Event event, String message) {
 	        event.setStatus(ESagaStatus.ROLLBACK_PENDING);
 	        event.setSource(CURRENT_SOURCE);
-	        addHistory(event, "Fail to validate products: ".concat(message));
+	        addHistory(event, "Fail to realize payment: ".concat(message));
 	    }
 
 }
