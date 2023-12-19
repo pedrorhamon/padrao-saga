@@ -59,7 +59,7 @@ public class PaymentService {
 		 var totalAmount = this.calculateAmount(event);
 		 var totalItems = this.calculateTotalItems(event);
 		 var payment = Payment.builder()
-				 .orderId(event.getPlayload().getId())
+				 .orderId(event.getPayload().getId())
 				 .transactionId(event.getTransactionId())
 				 .totalAmount(totalAmount)
 				 .totalItems(totalItems)
@@ -69,13 +69,13 @@ public class PaymentService {
 	}
 	
 	private void setEventAmountItems(Event event, Payment payment) {
-		event.getPlayload().setTotalAmount(payment.getTotalAmount());
-		event.getPlayload().setTotalItems(payment.getTotalItems());
+		event.getPayload().setTotalAmount(payment.getTotalAmount());
+		event.getPayload().setTotalItems(payment.getTotalItems());
 	}
 
 	private double calculateAmount(Event event) {
         return event
-            .getPlayload()
+            .getPayload()
             .getProducts()
             .stream()
             .map(product -> product.getQuantity() * product.getProduct().getUnitValue())
@@ -84,7 +84,7 @@ public class PaymentService {
 	
 	private int calculateTotalItems(Event event) {
 		return event
-				.getPlayload()
+				.getPayload()
 				.getProducts()
 				.stream()
 				.map(OrderProduct::getQuantity)
@@ -102,7 +102,7 @@ public class PaymentService {
 	}
 	
 	private Payment findByOrderIdAndTransactionId(Event event) {
-		return this.paymentRepository.findByOrderIdAndTransactionId(event.getPlayload().getId(), event.getTransactionId())
+		return this.paymentRepository.findByOrderIdAndTransactionId(event.getPayload().getId(), event.getTransactionId())
 				.orElseThrow(()-> new ValidationException("Payment not found by OrdeID and TransactionID"));
 	}
 	
