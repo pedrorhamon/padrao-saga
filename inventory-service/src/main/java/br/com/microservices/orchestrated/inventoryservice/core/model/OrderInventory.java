@@ -41,6 +41,15 @@ public class OrderInventory {
 	@Column(nullable = false)
 	private String transactionId;
 	
+	@Column(nullable = false)
+	private String orderQuantity;
+	
+	@Column(nullable = false)
+	private String oldrQuantity;
+	
+	@Column(nullable = false)
+	private String newQuantity;
+	
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 
