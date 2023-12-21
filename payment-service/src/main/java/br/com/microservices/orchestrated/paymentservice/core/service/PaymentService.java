@@ -135,7 +135,7 @@ public class PaymentService {
 			this.changePaymentStatusToRefund(event);
 			addHistory(event, "Rollback executed for payment");
 		} catch (Exception e) {
-			addHistory(event, "Rollback not executed for payment");
+			addHistory(event, "Rollback not executed for payment".concat(e.getMessage()));
 		}
 		
 		this.producer.sendEvent(this.jsonUtil.toJson(event));
