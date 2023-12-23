@@ -1,6 +1,6 @@
 package br.com.microservices.orchestrated.inventoryservice.core.repository;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -13,6 +13,6 @@ public interface OrderInventoryRepository extends JpaRepository<OrderInventory, 
 	
 	boolean existsByOrderIdAndTransactionId(String orderId, String transactionID);
 
-	Optional<OrderInventory> findByOrderIdAndTransactionId(String orderId, String transactionID);
+	List<OrderInventory> findByOrderIdAndTransactionId(String orderId, String transactionID);
 
 }
