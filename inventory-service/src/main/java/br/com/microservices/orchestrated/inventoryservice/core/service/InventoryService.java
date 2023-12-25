@@ -25,5 +25,8 @@ public class InventoryService {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	private void changeValidationToFail(Event event) {
+	}
 
 }
