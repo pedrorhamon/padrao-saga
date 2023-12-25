@@ -23,13 +23,13 @@ public class InventoryConsumer {
 	public void consumeSuccessEvent(String payload) {
 		log.info("Receiving success event {} from inventory-success topic", payload);
 		var event = jsonUtil.toEvent(payload);
-//		inventoryService.updateInventory(event);
+		this.inventoryService.updateInventory(event);
 	}
 
 	@KafkaListener(groupId = "${spring.kafka.consumer.group-id}", topics = "${spring.kafka.topic.inventory-fail}")
 	public void consumeFailEvent(String payload) {
 		log.info("Receiving rollback event {} from inventory-fail topic", payload);
 		var event = jsonUtil.toEvent(payload);
-//		inventoryService.rollbackInventory(event);
+		this.inventoryService.rollbackInventory(event);
 	}
 }
