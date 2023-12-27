@@ -44,6 +44,7 @@ public class InventoryService {
 		.forEach(products -> {
 			var inventory = this.findInventoryByProductCode(products.getProduct().getCode());
 			var orderInventory = this.createOrderInventory(event, products, inventory);
+			this.orderInventoryRepository.save(orderInventory);
 			
 		});
 	}
