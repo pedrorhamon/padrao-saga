@@ -4,6 +4,9 @@ import org.springframework.stereotype.Service;
 
 import br.com.microservices.orchestrated.inventoryservice.config.exception.ValidationException;
 import br.com.microservices.orchestrated.inventoryservice.core.dto.Event;
+import br.com.microservices.orchestrated.inventoryservice.core.dto.OrderProduct;
+import br.com.microservices.orchestrated.inventoryservice.core.model.Inventory;
+import br.com.microservices.orchestrated.inventoryservice.core.model.OrderInventory;
 import br.com.microservices.orchestrated.inventoryservice.core.producer.KafkaProducer;
 import br.com.microservices.orchestrated.inventoryservice.core.repository.InventoryRepository;
 import br.com.microservices.orchestrated.inventoryservice.core.repository.OrderInventoryRepository;
@@ -29,10 +32,29 @@ public class InventoryService {
 	public void updateInventory(Event event) {
 		try {
 			this.checkCurrentValidation(event);
-
+			this.createOrderInventory(event);
 		} catch (Exception e) {
 			log.error("Error trying to update inventory: ", e);
 		}
+	}
+
+	private void createOrderInventory(Event event) {
+		event.getPayload()
+		.getProducts()
+		.forEach(products -> {
+			var inventory = this.findInventoryByProductCode(products.getProduct().getCode());
+			var orderInventory = this.createOrderInventory(event, products, inventory);
+			
+		});
+	}
+	
+	private OrderInventory createOrderInventory(Event event, OrderProduct product, Inventory inventory) {
+		return;
+	}
+	
+	private Inventory findInventoryByProductCode(String productCode) {
+		return this.inventoryRepository.findByProductCode(productCode)
+				.orElseThrow(()-> new ValidationException("Inventory not found by informed product"));
 	}
 
 	private void checkCurrentValidation(Event event) {
