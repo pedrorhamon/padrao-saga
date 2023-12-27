@@ -49,7 +49,15 @@ public class InventoryService {
 	}
 	
 	private OrderInventory createOrderInventory(Event event, OrderProduct product, Inventory inventory) {
-		return;
+		return OrderInventory
+				.builder()
+				.inventory(inventory)
+				.oldQuantity(inventory.getAvailable())
+				.orderQuantity(product.getQuantity())
+				.newQuantity(inventory.getAvailable() - product.getQuantity())
+				.orderId(event.getPayload().getId())
+				.transactionId(event.getTransactionId())
+				.build();
 	}
 	
 	private Inventory findInventoryByProductCode(String productCode) {

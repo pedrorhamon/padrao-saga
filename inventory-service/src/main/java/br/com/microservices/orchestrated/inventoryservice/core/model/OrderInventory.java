@@ -44,13 +44,13 @@ public class OrderInventory {
 	private String transactionId;
 	
 	@Column(nullable = false)
-	private String orderQuantity;
+	private Integer orderQuantity;
 	
 	@Column(nullable = false)
-	private String oldrQuantity;
+	private Integer oldQuantity;
 	
 	@Column(nullable = false)
-	private String newQuantity;
+	private Integer newQuantity;
 	
 	@Column(nullable = false, updatable = false)
 	private LocalDateTime createdAt;
