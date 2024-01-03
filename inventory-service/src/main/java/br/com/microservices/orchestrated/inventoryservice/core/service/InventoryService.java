@@ -46,7 +46,18 @@ public class InventoryService {
 	}
 	
 	private void updateInventory(Order order) {
-		
+		order
+		.getProducts()
+		.forEach(products -> {
+			var inventory = this.findInventoryByProductCode(products.getProduct().getCode());
+			this.checkInventory(inventory.getAvailable(), products.getQuantity());
+		});
+	}
+	
+	private void checkInventory(int available, int orderQuantity) {
+		if(orderQuantity > available) {
+			throw new ValidationException("Product is out of stock!");
+		}
 	}
 	
 	private void handleSuccess(Event event) {
