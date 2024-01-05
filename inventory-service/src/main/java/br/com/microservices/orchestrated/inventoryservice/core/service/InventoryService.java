@@ -51,6 +51,8 @@ public class InventoryService {
 		.forEach(products -> {
 			var inventory = this.findInventoryByProductCode(products.getProduct().getCode());
 			this.checkInventory(inventory.getAvailable(), products.getQuantity());
+			inventory.setAvailable(inventory.getAvailable() - products.getQuantity());
+			this.inventoryRepository.save(inventory);
 		});
 	}
 	
