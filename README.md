@@ -1,3 +1,3 @@
 # padrao-saga
 
-utilizando kafka, java 17, redpanda, PostgreSQL 
+utilizando kafka, springboot, java 17, redpanda, PostgreSQL 
