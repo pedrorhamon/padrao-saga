@@ -115,7 +115,26 @@ public class InventoryService {
 	}
 
 	public void rollbackInventory(Event event) {
+		event.setStatus(ESagaStatus.FAIL);
+		event.setSource(CURRENT_SOURCE);
+		try {
+			this.returnInventoryToPreviousValues(event);
+			addHistory(event, "Rollback executed for inventory");
+		} catch (Exception e) {
+			addHistory(event, "Rollback not executed for inventory: ".concat(e.getMessage()));
+		}
 		
+		this.producer.sendEvent(this.jsonUtil.toJson(event));
+	}
+
+	private void returnInventoryToPreviousValues(Event event) {
+		this.orderInventoryRepository.findByOrderIdAndTransactionId(event.getPayload().getId(), event.getTransactionId())
+		.forEach(orderInventory -> {
+			var inventory = orderInventory.getInventory();
+			inventory.setAvailable(orderInventory.getOldQuantity());
+			this.inventoryRepository.save(inventory);
+			log.info("Restored inventory for order {} from {} to {}", event.getPayload().getId(), orderInventory.getNewQuantity(), inventory.getAvailable());
+		});
 	}
 
 	private void handleFailCurrentNotExecuted(Event event, String message) {
