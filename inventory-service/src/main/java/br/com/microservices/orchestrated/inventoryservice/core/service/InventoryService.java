@@ -58,14 +58,14 @@ public class InventoryService {
 	
 	private void checkInventory(int available, int orderQuantity) {
 		if(orderQuantity > available) {
-			throw new ValidationException("Product is out of stock!");
+			throw new ValidationException("Inventory is out of stock!");
 		}
 	}
 	
 	private void handleSuccess(Event event) {
         event.setStatus(ESagaStatus.SUCCESS);
         event.setSource(CURRENT_SOURCE);
-        this.addHistory(event, "inventory realized successfully!");
+        this.addHistory(event, "Inventory realized successfully!");
     }
 	
 	private void addHistory(Event event, String message) {
