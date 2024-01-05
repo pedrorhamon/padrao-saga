@@ -148,10 +148,10 @@ public class PaymentService {
 		this.save(payment);
 	}
 	
-	 private void handleFailCurrentNotExecuted(Event event, String message) {
-	        event.setStatus(ESagaStatus.ROLLBACK_PENDING);
-	        event.setSource(CURRENT_SOURCE);
-	        addHistory(event, "Fail to realize payment: ".concat(message));
-	    }
+	private void handleFailCurrentNotExecuted(Event event, String message) {
+		event.setStatus(ESagaStatus.ROLLBACK_PENDING);
+		event.setSource(CURRENT_SOURCE);
+		addHistory(event, "Fail to realize payment: ".concat(message));
+	}
 
 }

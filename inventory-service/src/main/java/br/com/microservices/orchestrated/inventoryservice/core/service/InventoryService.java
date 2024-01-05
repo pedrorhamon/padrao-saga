@@ -42,6 +42,7 @@ public class InventoryService {
 			this.handleSuccess(event);
 		} catch (Exception e) {
 			log.error("Error trying to update inventory: ", e);
+			this.handleFailCurrentNotExecuted(event, e.getMessage());
 		}
 	}
 	
@@ -114,11 +115,13 @@ public class InventoryService {
 	}
 
 	public void rollbackInventory(Event event) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
-	private void changeValidationToFail(Event event) {
+	private void handleFailCurrentNotExecuted(Event event, String message) {
+		event.setStatus(ESagaStatus.ROLLBACK_PENDING);
+		event.setSource(CURRENT_SOURCE);
+		addHistory(event, "Fail to update inventory: ".concat(message));
 	}
 
 }
