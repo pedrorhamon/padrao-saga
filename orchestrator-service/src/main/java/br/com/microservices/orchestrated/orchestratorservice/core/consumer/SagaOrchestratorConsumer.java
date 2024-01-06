@@ -16,6 +16,8 @@ import lombok.extern.slf4j.Slf4j;
 public class SagaOrchestratorConsumer {
 
 	private final JsonUtil jsonUtil;
+	
+	private final OrchestrationService service;
 
 	@KafkaListener(groupId = "${spring.kafka.consumer.group-id}", topics = "${spring.kafka.topic.start-saga}")
 	public void consumeStartSagaEvent(String payload) {
