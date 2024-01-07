@@ -1,5 +1,9 @@
 package br.com.microservices.orchestrated.orchestratorservice.core.saga;
 
+import static br.com.microservices.orchestrated.orchestratorservice.core.enums.EEventSource.*;
+import static br.com.microservices.orchestrated.orchestratorservice.core.enums.ESagaStatus.*;
+import static br.com.microservices.orchestrated.orchestratorservice.core.enums.ETopics.*;
+
 /**
  * @author pedroRhamon
  */
@@ -10,8 +14,16 @@ public final class SagaHandler {
 	}
 	
 	public static final Object[][] SAGA_HANDLER = {
-			{1,1,1},
-			{1,2,1},
-			{2,2,1},
+			{ORCHESTRATOR, SUCCESS, PRODUCT_VALIDATION_SUCCESS},
+			{ORCHESTRATOR, FAIL, FINISH_FAIL},
+			
+			
+			{PRODUCT_VALIDATION_SERVICE, ROLLBACK_PENDING, PRODUCT_VALIDATION_FAIL},
+			{PRODUCT_VALIDATION_SERVICE, FAIL, FINISH_FAIL},
+			{PRODUCT_VALIDATION_SERVICE, SUCCESS, PAYMENT_SUCCESS},
+			
+			{PRODUCT_VALIDATION_SERVICE, ROLLBACK_PENDING, PRODUCT_VALIDATION_FAIL},
+			{PRODUCT_VALIDATION_SERVICE, FAIL, FINISH_FAIL},
+			{PRODUCT_VALIDATION_SERVICE, SUCCESS, PAYMENT_SUCCESS},
 	};
 }
