@@ -25,7 +25,7 @@ public class SagaExecutionController {
 			throw new ValidationException("Source and status must be informed.");
 		}
 		
-		return ETopics.BASE_ORCHESTRATOR;
+		return this.findTopicBySourceAndStatus(event);
 	}
 	
 	private ETopics findTopicBySourceAndStatus(Event event) {
