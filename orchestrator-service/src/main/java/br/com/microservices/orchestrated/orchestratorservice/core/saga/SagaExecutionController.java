@@ -22,6 +22,8 @@ import static java.lang.String.format;
 @AllArgsConstructor
 public class SagaExecutionController {
 	
+	private static final String SAGA_ID = "ORDER ID: %s | TRANSACTION ID %s | EVENT ID %s";
+
 	public ETopics getNextTopic(Event event) {
 		if(isEmpty(event.getSource()) || isEmpty(event.getStatus())) {
 			throw new ValidationException("Source and status must be informed.");
@@ -60,6 +62,6 @@ public class SagaExecutionController {
 	}
 	
 	private String createSagaId(Event event) {
-		return format("ORDER ID: %s | TRANSACTION ID %s | EVENT ID %s", event.getPayload().getId(), event.getTransactionId(), event.getId());
+		return format(SAGA_ID, event.getPayload().getId(), event.getTransactionId(), event.getId());
 	}
 }
