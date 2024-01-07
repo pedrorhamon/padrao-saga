@@ -12,6 +12,8 @@ import br.com.microservices.orchestrated.orchestratorservice.core.enums.ETopics;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import static java.lang.String.format;
+
 /**
  * @author pedroRhamon
  */
@@ -41,5 +43,13 @@ public class SagaExecutionController {
 		var status = row[SagaHandler.SAGA_STATUS_INDEX];
 		
 		return event.getSource().equals(source) && event.getStatus().equals(status);
+	}
+	
+	private void logCurrentSaga(Event event, ETopics eTopics) {
+		
+	}
+	
+	private String createSagaId(Event event) {
+		return format("ORDER ID: %s | TRANSACTION ID %s | EVENT ID %s", event.getPayload().getId(), event.getTransactionId(), event.getId());
 	}
 }
