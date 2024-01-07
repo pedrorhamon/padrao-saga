@@ -45,8 +45,18 @@ public class SagaExecutionController {
 		return event.getSource().equals(source) && event.getStatus().equals(status);
 	}
 	
-	private void logCurrentSaga(Event event, ETopics eTopics) {
+	private void logCurrentSaga(Event event, ETopics topic) {
+		var sagaId = this.createSagaId(event);
+		var source = event.getSource();
 		
+		switch (event.getStatus()) {
+				case SUCCESS -> log.info("### CURRENT SAGA: {} | SUCCESS | NEXT TOPIC {} | {}",
+                source, topic, sagaId);
+            case ROLLBACK_PENDING -> log.info("### CURRENT SAGA: {} | SENDING TO ROLLBACK CURRENT SERVICE | NEXT TOPIC {} | {}",
+                source, topic, sagaId);
+            case FAIL -> log.info("### CURRENT SAGA: {} | SENDING TO ROLLBACK PREVIOUS SERVICE | NEXT TOPIC {} | {}",
+                source, topic, sagaId);
+	}
 	}
 	
 	private String createSagaId(Event event) {
