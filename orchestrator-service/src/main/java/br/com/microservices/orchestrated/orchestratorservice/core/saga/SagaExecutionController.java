@@ -1,7 +1,10 @@
 package br.com.microservices.orchestrated.orchestratorservice.core.saga;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
+import java.util.Arrays;
+
 import org.springframework.stereotype.Component;
-import static org.springframework.util.ObjectUtils.*;
 
 import br.com.microservices.orchestrated.orchestratorservice.config.exceptions.ValidationException;
 import br.com.microservices.orchestrated.orchestratorservice.core.dto.Event;
@@ -26,6 +29,17 @@ public class SagaExecutionController {
 	}
 	
 	private ETopics findTopicBySourceAndStatus(Event event) {
+		return (ETopics) (Arrays.stream(SagaHandler.SAGA_HANDLER)
+				.filter(row -> this.isEventSourceAndStatusValid(event, row))
+				.map(i -> i[SagaHandler.TOPIC_INDEX])
+				.findFirst()
+				.orElseThrow(() -> new ValidationException("Topic not found")));
+	}
+	
+	private boolean isEventSourceAndStatusValid(Event event, Object[] row) {
+		var source = row[SagaHandler.EVENT_SOURCE_INDEX];
+		var status = row[SagaHandler.SAGA_STATUS_INDEX];
 		
+		return event.getSource().equals(source) && event.getStatus().equals(status);
 	}
 }
