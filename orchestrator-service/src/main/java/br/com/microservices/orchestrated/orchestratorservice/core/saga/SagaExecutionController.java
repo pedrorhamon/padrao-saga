@@ -1,5 +1,6 @@
 package br.com.microservices.orchestrated.orchestratorservice.core.saga;
 
+import static java.lang.String.format;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
 import java.util.Arrays;
@@ -11,8 +12,6 @@ import br.com.microservices.orchestrated.orchestratorservice.core.dto.Event;
 import br.com.microservices.orchestrated.orchestratorservice.core.enums.ETopics;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import static java.lang.String.format;
 
 /**
  * @author pedroRhamon
@@ -28,8 +27,9 @@ public class SagaExecutionController {
 		if(isEmpty(event.getSource()) || isEmpty(event.getStatus())) {
 			throw new ValidationException("Source and status must be informed.");
 		}
-		
-		return this.findTopicBySourceAndStatus(event);
+		var topic = findTopicBySourceAndStatus(event);
+        this.logCurrentSaga(event, topic);
+        return topic;
 	}
 	
 	private ETopics findTopicBySourceAndStatus(Event event) {
