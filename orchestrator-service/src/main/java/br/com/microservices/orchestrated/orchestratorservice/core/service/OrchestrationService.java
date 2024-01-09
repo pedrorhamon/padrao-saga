@@ -52,8 +52,11 @@ public class OrchestrationService {
 	}
 
 	public void finishSagaFail(Event event) {
-		// TODO Auto-generated method stub
-		
+		event.setSource(EEventSource.ORCHESTRATOR);
+    	event.setStatus(ESagaStatus.FAIL);
+    	log.info("SAGA FINISHED WITH ERRORS FOR EVENT {}", event.getId());
+    	this.addHistory(event, "Saga finished with errors!");
+    	this.notifyFinishedSaga(event);
 	}
 	
 	private ETopics getTopics(Event event) {
