@@ -44,8 +44,11 @@ public class OrchestrationService {
 	}
 
 	public void finishSagaSuccess(Event event) {
-		// TODO Auto-generated method stub
-		
+		event.setSource(EEventSource.ORCHESTRATOR);
+    	event.setStatus(ESagaStatus.SUCCESS);
+    	log.info("SAGA FINISHED SUCCESSFULLY FOR EVENT {}", event.getId());
+    	this.addHistory(event, "Saga finished successfully!");
+    	this.notifyFinishedSaga(event);
 	}
 
 	public void finishSagaFail(Event event) {
@@ -67,5 +70,9 @@ public class OrchestrationService {
             .build();
         event.addToHistory(history);
     }
+	
+	private void notifyFinishedSaga(Event event) {
+		this.producer.sendEvent(this.jsonUtil.toJson(event), ETopics.NOTIFY_ENDING.getTopic());
+	}
 
 }
