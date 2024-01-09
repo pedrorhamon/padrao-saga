@@ -34,14 +34,14 @@ public class OrchestrationService {
     	var topic = this.getTopics(event);
     	log.info("SAGA STARTED!");
     	this.addHistory(event, "Saga started");
-    	this.producer.sendEvent(this.jsonUtil.toJson(event), topic.getTopic());
+    	this.sendToProducerWithTopic(event, topic);
     	
     }
     
 	public void continueSaga(Event event) {
 		var topic = this.getTopics(event);
 		log.info("SAGA CONTINUANG FOR EVENT {} ", event.getId());
-		this.producer.sendEvent(this.jsonUtil.toJson(event), topic.getTopic());
+		this.sendToProducerWithTopic(event, topic);
 	}
 
 	public void finishSagaSuccess(Event event) {
@@ -78,5 +78,8 @@ public class OrchestrationService {
 	private void notifyFinishedSaga(Event event) {
 		this.producer.sendEvent(this.jsonUtil.toJson(event), ETopics.NOTIFY_ENDING.getTopic());
 	}
-
+	
+	private void sendToProducerWithTopic(Event event, ETopics topic) {
+		this.producer.sendEvent(this.jsonUtil.toJson(event), topic.getTopic());
+	}
 }
