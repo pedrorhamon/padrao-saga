@@ -39,8 +39,9 @@ public class OrchestrationService {
     }
     
 	public void continueSaga(Event event) {
-		// TODO Auto-generated method stub
-		
+		var topic = this.getTopics(event);
+		log.info("SAGA CONTINUANG FOR EVENT {} ", event.getId());
+		this.producer.sendEvent(this.jsonUtil.toJson(event), topic.getTopic());
 	}
 
 	public void finishSagaSuccess(Event event) {
