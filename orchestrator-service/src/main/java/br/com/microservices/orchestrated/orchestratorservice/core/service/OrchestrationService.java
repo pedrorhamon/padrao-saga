@@ -32,6 +32,9 @@ public class OrchestrationService {
     	event.setSource(EEventSource.ORCHESTRATOR);
     	event.setStatus(ESagaStatus.SUCCESS);
     	var topic = this.getTopics(event);
+    	log.info("SAGA STARTED!");
+    	this.addHistory(event, "Saga started");
+    	this.producer.sendEvent(this.jsonUtil.toJson(event), topic.getTopic());
     	
     }
     
