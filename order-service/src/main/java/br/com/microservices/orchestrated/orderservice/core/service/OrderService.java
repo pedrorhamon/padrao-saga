@@ -47,7 +47,7 @@ public class OrderService {
 		var event = Event.builder()
 				.orderId(order.getId())
 				.transactionId(order.getTransactionId())
-				.playload(order)
+				.payload(order)
 				.createdAt(LocalDateTime.now())	
 				.build();
 		return this.eventService.save(event);
