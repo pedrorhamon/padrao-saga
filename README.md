@@ -5,4 +5,3 @@ Projeto concluido, redis, fiz algumas melhorias de performance, as melhorias mel
 ano 2023
 realizei novas implementações
 adicionei jobs.
-Tentando implementar aws
