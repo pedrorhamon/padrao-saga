@@ -1,3 +1,3 @@
 # padrao-saga
 
- kafka, springboot
+ kafka, springboot, java 21
